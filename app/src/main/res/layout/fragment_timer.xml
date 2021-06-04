@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50sp"
+        android:text="Timer"
+        android:textStyle="bold"
+        android:textColor="@color/purple_700"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="50dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:indeterminate="false"
+        android:layout_gravity="center"
+        android:max="60"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:background="@drawable/circular_progress_bar_background"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+        <TextView
+            android:id="@+id/until_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="Set Time"
+            android:textColor="@color/purple_700"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/start"
+        tools:layout_editor_absoluteX="207dp"
+        tools:layout_editor_absoluteY="565dp" />
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/pause"
+        tools:layout_editor_absoluteX="207dp"
+        tools:layout_editor_absoluteY="565dp" />
+</LinearLayout>
