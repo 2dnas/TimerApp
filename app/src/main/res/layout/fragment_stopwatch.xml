@@ -1,17 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/black">
+
+
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/stopwatch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50sp"
+        android:text="Stopwatch"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="50dp"/>
+
+    <Button
+        android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stopWatch"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="@string/start"
+        android:backgroundTint="#696969"
+        android:textSize="30sp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:background="@drawable/rounded_button"/>
+
+
+
+
+
+
+
+
+</LinearLayout>

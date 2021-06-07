@@ -1,15 +1,22 @@
 package com.example.myapp.fragments
 
+import android.app.Dialog
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.myapp.R
 import com.example.myapp.databinding.FragmentTimerBinding
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +32,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     private var isPaused = false
     private var resumeSecond = 0L
     private var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-    private lateinit var time : String
+    private var time: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +49,10 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
         binding.untilFinish.setOnClickListener {
 
+        }
+
+        binding.untilFinish.setOnClickListener {
+            showTimeDialog()
         }
 
         binding.start.setOnClickListener {
@@ -67,7 +78,13 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     private suspend fun startTimer() {
         if (countDownTimer == null) {
             binding.start.text = "Stop"
-            startCountDownTimer(60)
+            if (time == null) {
+                startCountDownTimer(60)
+
+            } else {
+                startCountDownTimer(time!!)
+
+            }
 
         } else {
             binding.start.text = "Start"
@@ -75,6 +92,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             binding.progressBar.progress = 0
             countDownTimer?.cancel()
             countDownTimer = null
+            time = null
         }
 
     }
@@ -95,34 +113,89 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     }
 
     private suspend fun startCountDownTimer(getSecond: Long) {
-        var second = getSecond * SECOND
+        val second = getSecond * SECOND
         coroutineScope.launch {
-                countDownTimer = object : CountDownTimer(((second)), (1 * SECOND)) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        if (isPaused) {
-                            resumeSecond = millisUntilFinished / SECOND
-                            cancel()
-                        }
-                        binding.untilFinish.text = (millisUntilFinished / SECOND).toString()
-                        binding.progressBar.progress = (60 - (millisUntilFinished / SECOND)).toInt()
+            countDownTimer = object : CountDownTimer(((second)), (1 * SECOND)) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val secondsUntilFinished = millisUntilFinished / SECOND
+                    if (isPaused) {
+                        resumeSecond = secondsUntilFinished
+                        cancel()
+                    }
+                    binding.untilFinish.text = selectedTimeConverter((secondsUntilFinished).toString())
+                    if(time == null){
+                        binding.progressBar.max = 60
 
-
+                        binding.progressBar.setProgress(
+                            (60 - (millisUntilFinished / SECOND)).toInt(), true)
+                    }else {
+                        binding.progressBar.max = time!!.toInt()
+                        binding.progressBar.setProgress(
+                            (time!! - (millisUntilFinished / SECOND)).toInt(), true)
                     }
 
-                    override fun onFinish() {
-                        Toast.makeText(requireContext(), "Timer End", Toast.LENGTH_SHORT).show()
-                        playEndSound()
-                    }
+                }
 
-                }.start()
-            }
+                override fun onFinish() {
+                    Toast.makeText(requireContext(), "Timer End", Toast.LENGTH_SHORT).show()
+                    playEndSound()
+                }
+
+            }.start()
+        }
 
     }
 
 
+    private fun showTimeDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setCancelable(true)
+            setContentView(R.layout.select_time_dialog)
 
-    fun showTimeDialog(){
+            val button = findViewById<Button>(R.id.select_button)
+            val time = findViewById<EditText>(R.id.time_select)
+            button.setOnClickListener {
+                selectedTimeConverter(time.text.toString())
+                this@TimerFragment.time = time.text.toString().toLong()
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
+    }
 
+
+    private fun selectedTimeConverter(time: String) : String {
+        val resultString: String
+        val timeInt = time.toInt()
+        val hours = timeInt / 3600
+        val hourString: String
+        val minutes = timeInt / 60 - hours * 60
+        val minutesString: String
+        val seconds = timeInt - (minutes * 60) - (hours * 3600)
+        val secondString: String
+
+        if (hours < 10) {
+            hourString = "0$hours"
+        } else {
+            hourString = hours.toString()
+        }
+        if (minutes < 10) {
+            minutesString = "0$minutes"
+        } else {
+            minutesString = minutes.toString()
+        }
+
+        if (seconds < 10) {
+            secondString = "0$seconds"
+        } else {
+            secondString = seconds.toString()
+        }
+
+        resultString = "$hourString:$minutesString:$secondString"
+        binding.untilFinish.text = resultString
+        return resultString
     }
 
 
